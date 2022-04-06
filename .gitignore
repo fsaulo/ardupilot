@@ -77,3 +77,12 @@ status.txt
 tags
 test.ArduCopter/*
 Thumbs.db
+.lock-waf_linux_build
+Tools/autotest/logs/
+Tools/autotest/mav.parm
+Tools/autotest/terrain/
+modules/
+tasklist.json
+arducopter.cpp
+logs/
+mav.parm
