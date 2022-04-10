@@ -38,13 +38,13 @@ def sim_send(m, a):
             raise
 
     buf = struct.pack('<17dI',
-                      a.latitude, a.longitude, a.altitude, degrees(yaw),
-                      a.velocity.x, a.velocity.y, a.velocity.z,
-                      a.accelerometer.x, a.accelerometer.y, a.accelerometer.z,
-                      degrees(earth_rates.x), degrees(earth_rates.y), degrees(earth_rates.z),
-                      degrees(roll), degrees(pitch), degrees(yaw),
-                      math.sqrt(a.velocity.x*a.velocity.x + a.velocity.y*a.velocity.y),
-                      0x4c56414f)
+                    a.latitude, a.longitude, a.altitude, degrees(yaw),
+                    a.velocity.x, a.velocity.y, a.velocity.z,
+                    a.accelerometer.x, a.accelerometer.y, a.accelerometer.z,
+                    degrees(earth_rates.x), degrees(earth_rates.y), degrees(earth_rates.z),
+                    degrees(roll), degrees(pitch), degrees(yaw),
+                    math.sqrt(a.velocity.x*a.velocity.x + a.velocity.y*a.velocity.y),
+                    0x4c56414f)
     try:
         sim_out.send(buf)
     except socket.error as e:
@@ -101,7 +101,7 @@ parser.add_option("--frame", dest="frame", help="frame type (+,X,octo)", default
 
 for m in [ 'home' ]:
     if not opts.__dict__[m]:
-        print("Missing required option '%s'" % m)
+        print("pysim> Missing required option '%s'" % m)
         parser.print_help()
         sys.exit(1)
 
@@ -131,7 +131,7 @@ fdm = fgFDM.fgFDM()
 # create the quadcopter model
 a = MultiCopter(frame=opts.frame)
 
-print("Simulating %u motors for frame %s" % (len(a.motors), opts.frame))
+print("pysim> Simulating %u motors for frame %s" % (len(a.motors), opts.frame))
 
 # motors initially off
 m = [0.0] * 11
@@ -142,7 +142,7 @@ frame_count = 0
 # parse home
 v = opts.home.split(',')
 if len(v) != 4:
-    print("home should be lat,lng,alt,hdg")
+    print("pysim> home should be lat,lng,alt,hdg")
     sys.exit(1)
 a.home_latitude = float(v[0])
 a.home_longitude = float(v[1])
@@ -156,7 +156,7 @@ a.position.z = 0
 a.wind = util.Wind(opts.wind)
 a.set_yaw_degrees(a.yaw)
 
-print("Starting at lat=%f lon=%f alt=%.1f heading=%.1f" % (
+print("pysim> Starting at lat=%f lon=%f alt=%.1f heading=%.1f" % (
     a.home_latitude,
     a.home_longitude,
     a.home_altitude,
