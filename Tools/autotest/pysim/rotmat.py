@@ -45,49 +45,49 @@ class Vector3:
 
     def __repr__(self):
         return 'Vector3(%.2f, %.2f, %.2f)' % (self.x,
-                                              self.y,
-                                              self.z)
+                                            self.y,
+                                            self.z)
 
     def __add__(self, v):
         return Vector3(self.x + v.x,
-                       self.y + v.y,
-                       self.z + v.z)
+                    self.y + v.y,
+                    self.z + v.z)
 
     __radd__ = __add__
 
     def __sub__(self, v):
         return Vector3(self.x - v.x,
-                       self.y - v.y,
-                       self.z - v.z)
+                    self.y - v.y,
+                    self.z - v.z)
 
     def __neg__(self):
         return Vector3(-self.x, -self.y, -self.z)
 
     def __rsub__(self, v):
         return Vector3(v.x - self.x,
-                       v.y - self.y,
-                       v.z - self.z)
+                    v.y - self.y,
+                    v.z - self.z)
 
     def __mul__(self, v):
         if isinstance(v, Vector3):
             '''dot product'''
             return self.x*v.x + self.y*v.y + self.z*v.z
         return Vector3(self.x * v,
-                       self.y * v,
-                       self.z * v)
+                    self.y * v,
+                    self.z * v)
 
     __rmul__ = __mul__
 
     def __div__(self, v):
         return Vector3(self.x / v,
-                       self.y / v,
-                       self.z / v)
+                    self.y / v,
+                    self.z / v)
 
     def __mod__(self, v):
         '''cross product'''
         return Vector3(self.y*v.z - self.z*v.y,
-                       self.z*v.x - self.x*v.z,
-                       self.x*v.y - self.y*v.x)
+                    self.z*v.x - self.x*v.z,
+                    self.x*v.y - self.y*v.x)
 
     def __copy__(self):
         return Vector3(self.x, self.y, self.z)
@@ -136,28 +136,28 @@ class Matrix3:
 
     def transposed(self):
         return Matrix3(Vector3(self.a.x, self.b.x, self.c.x),
-                       Vector3(self.a.y, self.b.y, self.c.y),
-                       Vector3(self.a.z, self.b.z, self.c.z))
+                    Vector3(self.a.y, self.b.y, self.c.y),
+                    Vector3(self.a.z, self.b.z, self.c.z))
 
 
     def from_euler(self, roll, pitch, yaw):
         '''fill the matrix from Euler angles in radians'''
         cp = cos(pitch)
-	sp = sin(pitch)
-	sr = sin(roll)
-	cr = cos(roll)
-	sy = sin(yaw)
-	cy = cos(yaw)
+        sp = sin(pitch)
+        sr = sin(roll)
+        cr = cos(roll)
+        sy = sin(yaw)
+        cy = cos(yaw)
 
-	self.a.x = cp * cy
-	self.a.y = (sr * sp * cy) - (cr * sy)
-	self.a.z = (cr * sp * cy) + (sr * sy)
-	self.b.x = cp * sy
-	self.b.y = (sr * sp * sy) + (cr * cy)
-	self.b.z = (cr * sp * sy) - (sr * cy)
-	self.c.x = -sp
-	self.c.y = sr * cp
-	self.c.z = cr * cp
+        self.a.x = cp * cy
+        self.a.y = (sr * sp * cy) - (cr * sy)
+        self.a.z = (cr * sp * cy) + (sr * sy)
+        self.b.x = cp * sy
+        self.b.y = (sr * sp * sy) + (cr * cy)
+        self.b.z = (cr * sp * sy) - (sr * cy)
+        self.c.x = -sp
+        self.c.y = sr * cp
+        self.c.z = cr * cp
 
 
     def to_euler(self):
@@ -187,19 +187,19 @@ class Matrix3:
         if isinstance(other, Vector3):
             v = other
             return Vector3(self.a.x * v.x + self.a.y * v.y + self.a.z * v.z,
-                           self.b.x * v.x + self.b.y * v.y + self.b.z * v.z,
-                           self.c.x * v.x + self.c.y * v.y + self.c.z * v.z)
+                        self.b.x * v.x + self.b.y * v.y + self.b.z * v.z,
+                        self.c.x * v.x + self.c.y * v.y + self.c.z * v.z)
         elif isinstance(other, Matrix3):
             m = other
             return Matrix3(Vector3(self.a.x * m.a.x + self.a.y * m.b.x + self.a.z * m.c.x,
-                                   self.a.x * m.a.y + self.a.y * m.b.y + self.a.z * m.c.y,
-                                   self.a.x * m.a.z + self.a.y * m.b.z + self.a.z * m.c.z),
-                           Vector3(self.b.x * m.a.x + self.b.y * m.b.x + self.b.z * m.c.x,
-                                   self.b.x * m.a.y + self.b.y * m.b.y + self.b.z * m.c.y,
-                                   self.b.x * m.a.z + self.b.y * m.b.z + self.b.z * m.c.z),
-                           Vector3(self.c.x * m.a.x + self.c.y * m.b.x + self.c.z * m.c.x,
-                                   self.c.x * m.a.y + self.c.y * m.b.y + self.c.z * m.c.y,
-                                   self.c.x * m.a.z + self.c.y * m.b.z + self.c.z * m.c.z))
+                                self.a.x * m.a.y + self.a.y * m.b.y + self.a.z * m.c.y,
+                                self.a.x * m.a.z + self.a.y * m.b.z + self.a.z * m.c.z),
+                        Vector3(self.b.x * m.a.x + self.b.y * m.b.x + self.b.z * m.c.x,
+                                self.b.x * m.a.y + self.b.y * m.b.y + self.b.z * m.c.y,
+                                self.b.x * m.a.z + self.b.y * m.b.z + self.b.z * m.c.z),
+                        Vector3(self.c.x * m.a.x + self.c.y * m.b.x + self.c.z * m.c.x,
+                                self.c.x * m.a.y + self.c.y * m.b.y + self.c.z * m.c.y,
+                                self.c.x * m.a.z + self.c.y * m.b.z + self.c.z * m.c.z))
         v = other
         return Matrix3(self.a * v, self.b * v, self.c * v)
 
@@ -216,29 +216,29 @@ class Matrix3:
 
     def rotate(self, g):
         '''rotate the matrix by a given amount on 3 axes'''
-	temp_matrix = Matrix3()
+        temp_matrix = Matrix3()
         a = self.a
         b = self.b
         c = self.c
-	temp_matrix.a.x = a.y * g.z - a.z * g.y
-	temp_matrix.a.y = a.z * g.x - a.x * g.z
-	temp_matrix.a.z = a.x * g.y - a.y * g.x
-	temp_matrix.b.x = b.y * g.z - b.z * g.y
-	temp_matrix.b.y = b.z * g.x - b.x * g.z
-	temp_matrix.b.z = b.x * g.y - b.y * g.x
-	temp_matrix.c.x = c.y * g.z - c.z * g.y
-	temp_matrix.c.y = c.z * g.x - c.x * g.z
-	temp_matrix.c.z = c.x * g.y - c.y * g.x
+        temp_matrix.a.x = a.y * g.z - a.z * g.y
+        temp_matrix.a.y = a.z * g.x - a.x * g.z
+        temp_matrix.a.z = a.x * g.y - a.y * g.x
+        temp_matrix.b.x = b.y * g.z - b.z * g.y
+        temp_matrix.b.y = b.z * g.x - b.x * g.z
+        temp_matrix.b.z = b.x * g.y - b.y * g.x
+        temp_matrix.c.x = c.y * g.z - c.z * g.y
+        temp_matrix.c.y = c.z * g.x - c.x * g.z
+        temp_matrix.c.z = c.x * g.y - c.y * g.x
         self.a += temp_matrix.a
         self.b += temp_matrix.b
         self.c += temp_matrix.c
 
     def normalize(self):
         '''re-normalise a rotation matrix'''
-	error = self.a * self.b
-	t0 = self.a - (self.b * (0.5 * error))
-	t1 = self.b - (self.a * (0.5 * error))
-	t2 = t0 % t1
+        error = self.a * self.b
+        t0 = self.a - (self.b * (0.5 * error))
+        t1 = self.b - (self.a * (0.5 * error))
+        t2 = t0 % t1
         self.a = t0 * (1.0 / t0.length())
         self.b = t1 * (1.0 / t1.length())
         self.c = t2 * (1.0 / t2.length())
