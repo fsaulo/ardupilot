@@ -26,13 +26,13 @@ ifeq ($(findstring MINGW, $(SYSTYPE)),MINGW)
   FIND_TOOL    =  $(firstword $(wildcard $(addsuffix /$(1).exe,$(TOOLPATH))))
 endif
 
-NATIVE_CXX     :=  g++
-NATIVE_CC      :=  gcc
-NATIVE_AS      :=  gcc
-NATIVE_AR      :=  ar
-NATIVE_LD      :=  g++
-NATIVE_GDB     :=  gdb
-NATIVE_OBJCOPY :=  objcopy
+NATIVE_CXX     :=  /home/felix/.local/opt/gcc-4.8.5/bin/gcc
+NATIVE_CC      :=  /home/felix/.local/opt/gcc-4.8.5/bin/gcc
+NATIVE_AS      :=  /home/felix/.local/opt/gcc-4.8.5/bin/gcc
+NATIVE_AR      :=  /home/felix/.local/opt/gcc-4.8.5/bin/ar
+NATIVE_LD      :=  /home/felix/.local/opt/gcc-4.8.5/bin/gcc
+NATIVE_GDB     :=  /home/felix/.local/opt/gcc-4.8.5/bin/gdb
+NATIVE_OBJCOPY :=  /home/felix/.local/opt/gcc-4.8.5/bin/objcopy
 
 AVR_CXX     :=  $(call FIND_TOOL,avr-g++)
 AVR_CC      :=  $(call FIND_TOOL,avr-gcc)

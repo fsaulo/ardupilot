@@ -21,7 +21,7 @@ ASOPTS          =   -x assembler-with-cpp
 
 # disable as this breaks distcc
 #ifneq ($(SYSTYPE),Darwin)
-#LISTOPTS        =   -adhlns=$(@:.o=.lst)
+# LISTOPTS        =   -adhlns=$(@:.o=.lst)
 #endif
 
 CPUFLAGS     = -D_GNU_SOURCE
@@ -34,7 +34,7 @@ CFLAGS          =   -g $(CPUFLAGS) $(DEFINES) -Wa,$(LISTOPTS) $(OPTFLAGS)
 CFLAGS         +=   $(WARNFLAGS) $(DEPFLAGS) $(COPTS)
 ASFLAGS         =   -g $(CPUFLAGS) $(DEFINES) -Wa,$(LISTOPTS) $(DEPFLAGS)
 ASFLAGS        +=   $(ASOPTS)
-LDFLAGS         =   -g $(CPUFLAGS) $(OPTFLAGS) $(WARNFLAGS)
+LDFLAGS         =   -g -lstdc++ $(CPUFLAGS) $(OPTFLAGS) $(WARNFLAGS)
 
 ifneq ($(SYSTYPE),Darwin)
 LDFLAGS        +=   -Wl,--gc-sections -Wl,-Map -Wl,$(SKETCHMAP)
