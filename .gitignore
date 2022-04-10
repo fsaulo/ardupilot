@@ -82,6 +82,7 @@ Tools/autotest/logs/
 Tools/autotest/mav.parm
 Tools/autotest/terrain/
 modules/
+terrain/
 tasklist.json
 arducopter.cpp
 logs/
