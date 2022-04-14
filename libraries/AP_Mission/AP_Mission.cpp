@@ -5,6 +5,8 @@
 
 #include "AP_Mission.h"
 #include <AP_Terrain.h>
+#include <stdio.h>
+
 
 const AP_Param::GroupInfo AP_Mission::var_info[] PROGMEM = {
 
@@ -460,6 +462,7 @@ bool AP_Mission::mavlink_to_mission_cmd(const mavlink_mission_item_t& packet, AP
     // command's position in mission list and mavlink id
     cmd.index = packet.seq;
     cmd.id = packet.command;
+    fprintf(stdout, "Got command\n");
 
     // command specific conversions from mavlink packet to mission command
     switch (cmd.id) {
@@ -545,6 +548,7 @@ bool AP_Mission::mavlink_to_mission_cmd(const mavlink_mission_item_t& packet, AP
         break;
 
     case MAV_CMD_DO_SET_MODE:                           // MAV ID: 176
+        fprintf(stdout, "Change mode requested\n");
         cmd.p1 = packet.param1;                         // flight mode identifier
         break;
 

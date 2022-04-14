@@ -5,6 +5,12 @@ extern "C" {
 #ifndef _CHECKSUM_H_
 #define _CHECKSUM_H_
 
+// Visual Studio versions before 2010 don't have stdint.h, so we just error out.
+#if (defined _MSC_VER) && (_MSC_VER < 1600)
+#error "The C-MAVLink implementation requires Visual Studio 2010 or greater"
+#endif
+
+#include <stdint.h>
 
 /**
  *
@@ -17,7 +23,7 @@ extern "C" {
 
 #ifndef HAVE_CRC_ACCUMULATE
 /**
- * @brief Accumulate the X.25 CRC by adding one char at a time.
+ * @brief Accumulate the MCRF4XX CRC16 by adding one char at a time.
  *
  * The checksum function adds the hash of one char at a time to the
  * 16 bit checksum (uint16_t).
@@ -38,9 +44,9 @@ static inline void crc_accumulate(uint8_t data, uint16_t *crcAccum)
 
 
 /**
- * @brief Initiliaze the buffer for the X.25 CRC
+ * @brief Initialize the buffer for the MCRF4XX CRC16
  *
- * @param crcAccum the 16 bit X.25 CRC
+ * @param crcAccum the 16 bit MCRF4XX CRC16
  */
 static inline void crc_init(uint16_t* crcAccum)
 {
@@ -49,7 +55,7 @@ static inline void crc_init(uint16_t* crcAccum)
 
 
 /**
- * @brief Calculates the X.25 checksum on a byte buffer
+ * @brief Calculates the MCRF4XX CRC16 checksum on a byte buffer
  *
  * @param  pBuffer buffer containing the byte array to hash
  * @param  length  length of the byte array
@@ -67,7 +73,7 @@ static inline uint16_t crc_calculate(const uint8_t* pBuffer, uint16_t length)
 
 
 /**
- * @brief Accumulate the X.25 CRC by adding an array of bytes
+ * @brief Accumulate the MCRF4XX CRC16 CRC by adding an array of bytes
  *
  * The checksum function adds the hash of one char at a time to the
  * 16 bit checksum (uint16_t).

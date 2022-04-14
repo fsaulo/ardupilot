@@ -295,7 +295,7 @@ void SITL_State::_timer_handler(int signum)
     count++;
 	if (hal.scheduler->millis() - last_report > 1000) {
 		fprintf(stdout, "TH %u cps\n", count);
-	//	print_trace();
+        print_trace();
 		count = 0;
 		last_report = hal.scheduler->millis();
 	}

@@ -23,24 +23,25 @@
 #include <AP_HAL.h>
 #include <GCS_MAVLink.h>
 #include <SITL.h>
+#include <stdio.h>
 
 extern const AP_HAL::HAL& hal;
 
 // table of user settable parameters
 const AP_Param::GroupInfo SITL::var_info[] PROGMEM = {
-    AP_GROUPINFO("BARO_RND",   0, SITL,  baro_noise,  3),
-    AP_GROUPINFO("GYR_RND",    1, SITL,  gyro_noise, 30),
-    AP_GROUPINFO("ACC_RND",    2, SITL,  accel_noise, 3),
-    AP_GROUPINFO("MAG_RND",    3, SITL,  mag_noise,  10),
-    AP_GROUPINFO("GPS_DISABLE",4, SITL,  gps_disable, 0),
-    AP_GROUPINFO("DRIFT_SPEED",5, SITL,  drift_speed, 0.2),
-    AP_GROUPINFO("DRIFT_TIME", 6, SITL,  drift_time,  5),
-    AP_GROUPINFO("GPS_DELAY",  7, SITL,  gps_delay,   2),
-    AP_GROUPINFO("ENGINE_MUL", 8, SITL,  engine_mul,  1),
-    AP_GROUPINFO("WIND_SPD",   9, SITL,  wind_speed,  0),
-    AP_GROUPINFO("WIND_DIR",  10, SITL,  wind_direction,  180),
-    AP_GROUPINFO("WIND_TURB", 11, SITL,  wind_turbulance,  0.2),
-    AP_GROUPINFO("GPS_TYPE",  12, SITL,  gps_type,  SITL::GPS_TYPE_UBLOX),
+    AP_GROUPINFO("BARO_RND",      0,  SITL,  baro_noise,  3),
+    AP_GROUPINFO("GYR_RND",       1,  SITL,  gyro_noise, 30),
+    AP_GROUPINFO("ACC_RND",       2,  SITL,  accel_noise, 3),
+    AP_GROUPINFO("MAG_RND",       3,  SITL,  mag_noise,  10),
+    AP_GROUPINFO("GPS_DISABLE",   4,  SITL,  gps_disable, 0),
+    AP_GROUPINFO("DRIFT_SPEED",   5,  SITL,  drift_speed, 0.2),
+    AP_GROUPINFO("DRIFT_TIME",    6,  SITL,  drift_time,  5),
+    AP_GROUPINFO("GPS_DELAY",     7,  SITL,  gps_delay,   2),
+    AP_GROUPINFO("ENGINE_MUL",    8,  SITL,  engine_mul,  1),
+    AP_GROUPINFO("WIND_SPD",      9,  SITL,  wind_speed,  0),
+    AP_GROUPINFO("WIND_DIR",      10, SITL,  wind_direction,  180),
+    AP_GROUPINFO("WIND_TURB",     11, SITL,  wind_turbulance,  0.2),
+    AP_GROUPINFO("GPS_TYPE",      12, SITL,  gps_type,  SITL::GPS_TYPE_UBLOX),
     AP_GROUPINFO("GPS_BYTELOSS",  13, SITL,  gps_byteloss,  0),
     AP_GROUPINFO("GPS_NUMSATS",   14, SITL,  gps_numsats,   10),
     AP_GROUPINFO("MAG_ERROR",     15, SITL,  mag_error,  0),

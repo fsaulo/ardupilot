@@ -290,6 +290,7 @@ void GCS_MAVLINK::handle_mission_request(AP_Mission &mission, mavlink_message_t 
     _mav_finalize_message_chan_send(chan, 
                                     MAVLINK_MSG_ID_MISSION_ITEM,
                                     (const char *)&ret_packet,
+                                    MAVLINK_MSG_ID_SERIAL_CONTROL_MIN_LEN,
                                     MAVLINK_MSG_ID_MISSION_ITEM_LEN,
                                     MAVLINK_MSG_ID_MISSION_ITEM_CRC);
     return;
@@ -706,6 +707,7 @@ void GCS_MAVLINK::handle_mission_item(mavlink_message_t *msg, AP_Mission &missio
     struct AP_Mission::Mission_Command cmd = {};
 
     mavlink_msg_mission_item_decode(msg, &packet);
+    
     if (mavlink_check_target(packet.target_system,packet.target_component)) {
         return;
     }

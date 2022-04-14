@@ -1,6 +1,7 @@
 
 #include <AP_HAL.h>
 #include <GCS_Console.h>
+#include <stdio.h.>
 
 extern const AP_HAL::HAL& hal;
 
