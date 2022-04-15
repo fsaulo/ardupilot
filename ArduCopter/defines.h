@@ -4,6 +4,7 @@
 #define _DEFINES_H
 
 #include <AP_HAL_Boards.h>
+#include <APM_Config.h>
 
 // Just so that it's completely clear...
 #define ENABLED                 1
@@ -194,10 +195,13 @@ enum AutoMode {
 
 // Guided modes
 enum GuidedMode {
+#if NAV_GUIDED == ENABLED
+    Guided_TakeOff,
+    Guided_WP,
+    Guided_Velocity
+#else
     Guided_TakeOff,
     Guided_WP
-#if NAV_GUIDED == ENABLED
-    ,Guided_Velocity
 #endif
 };
 
