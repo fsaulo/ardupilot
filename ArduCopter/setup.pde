@@ -426,10 +426,13 @@ print_accel_offsets_and_scaling(void)
 {
     const Vector3f &accel_offsets = ins.get_accel_offsets();
     const Vector3f &accel_scale = ins.get_accel_scale();
-    cliSerial->printf_P(PSTR("A_off: %4.2f, %4.2f, %4.2f\nA_scale: %4.2f, %4.2f, %4.2f\n"),
+    cliSerial->printf_P(PSTR("Accelerometer offsets\n"));
+    cliSerial->printf_P(PSTR("A_off: %4.2f, %4.2f, %4.2f\n"),
                     (float)accel_offsets.x,                           // Pitch
                     (float)accel_offsets.y,                           // Roll
-                    (float)accel_offsets.z,                           // YAW
+                    (float)accel_offsets.z);                          // YAW
+    cliSerial->printf_P(PSTR("Accelerometer scaling\n"));                   
+    cliSerial->printf_P(PSTR("A_sca: %4.2f, %4.2f, %4.2f\n"),                
                     (float)accel_scale.x,                             // Pitch
                     (float)accel_scale.y,                             // Roll
                     (float)accel_scale.z);                            // YAW
@@ -439,6 +442,7 @@ static void
 print_gyro_offsets(void)
 {
     const Vector3f &gyro_offsets = ins.get_gyro_offsets();
+    cliSerial->printf_P(PSTR("Gyro offsets\n"));
     cliSerial->printf_P(PSTR("G_off: %4.2f, %4.2f, %4.2f\n"),
                     (float)gyro_offsets.x,
                     (float)gyro_offsets.y,
@@ -552,7 +556,7 @@ init_esc()
 
 static void report_version()
 {
-    cliSerial->printf_P(PSTR("FW Ver: %d\n"),(int)g.k_format_version);
+    cliSerial->printf_P(PSTR("Firmware version: 3v%d\n"),(int)g.k_format_version);
     print_divider();
     print_blanks(2);
 }

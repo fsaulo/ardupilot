@@ -161,6 +161,6 @@ static void load_parameters(void)
 	    // Load all auto-loaded EEPROM variables
 	    AP_Param::load_all();
 
-	    cliSerial->printf_P(PSTR("load_all took %luus\n"), hal.scheduler->micros() - before);
+	    cliSerial->printf_P(PSTR("Took %lu us to load all parameters\n"), hal.scheduler->micros() - before);
 	}
 }

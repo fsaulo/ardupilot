@@ -593,7 +593,7 @@ static void load_parameters(void)
 	    // Load all auto-loaded EEPROM variables
 	    AP_Param::load_all();
 
-	    cliSerial->printf_P(PSTR("load_all took %luus\n"), micros() - before);
+	    cliSerial->printf_P(PSTR("Took %luus to load parameters\n"), micros() - before);
 	}
 
     // set a lower default filter frequency for rovers, due to very

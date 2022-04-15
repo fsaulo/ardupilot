@@ -173,7 +173,7 @@ AP_GPS::detect_instance(uint8_t instance)
         if ((_type[instance] == GPS_TYPE_AUTO || _type[instance] == GPS_TYPE_UBLOX) &&
             pgm_read_dword(&_baudrates[dstate->last_baud]) >= 38400 && 
             AP_GPS_UBLOX::_detect(dstate->ublox_detect_state, data)) {
-            hal.console->print_P(PSTR(" ublox "));
+            hal.console->print_P(PSTR("\nGPS ublox detected\n"));
             new_gps = new AP_GPS_UBLOX(*this, state[instance], port);
         } 
 		else if ((_type[instance] == GPS_TYPE_AUTO || _type[instance] == GPS_TYPE_MTK19) &&

@@ -108,10 +108,8 @@ static void init_ardupilot()
         hal.uartE->begin(38400, 256, 16);
     }
 #endif
-
-    cliSerial->printf_P(PSTR("\n\nInit " FIRMWARE_STRING
-                         "\n\nFree RAM: %u\n"),
-                        hal.util->available_memory());
+    gcs_send_text_P(SEVERITY_INFO, ("Init " FIRMWARE_STRING "\n"));
+    cliSerial->printf_P(PSTR("Free RAM: %u\n"), hal.util->available_memory());
 
 #if CONFIG_HAL_BOARD == HAL_BOARD_APM2
     /*
@@ -293,8 +291,8 @@ static void init_ardupilot()
         hal.uartD->set_blocking_writes(false);
     }
 
-    cliSerial->print_P(PSTR("\nReady to FLY "));
-
+    gcs_send_text_P(SEVERITY_INFO, PSTR("Ready to FLY"));
+    
     // flag that initialisation has completed
     ap.initialised = true;
 }
@@ -305,7 +303,7 @@ static void init_ardupilot()
 //******************************************************************************
 static void startup_ground(bool force_gyro_cal)
 {
-    gcs_send_text_P(SEVERITY_LOW,PSTR("GROUND START"));
+    gcs_send_text_P(SEVERITY_INFO,PSTR("GROUND START"));
 
     // initialise ahrs (may push imu calibration into the mpu6000 if using that device).
     ahrs.init();

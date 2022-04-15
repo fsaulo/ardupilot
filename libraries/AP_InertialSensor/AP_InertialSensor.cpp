@@ -647,6 +647,9 @@ AP_InertialSensor::_init_accel()
             }
             flashcount++;
         }
+        
+        // Jump line after loading has finished
+        hal.console->print_P(PSTR("\n"));
 
         for (uint8_t k=0; k<num_accels; k++) {
             // null gravity from the Z accel
@@ -694,7 +697,7 @@ AP_InertialSensor::_init_gyro()
     bool converged[INS_MAX_INSTANCES];
 
     // cold start
-    hal.console->print_P(PSTR("Init Gyro"));
+    hal.console->print_P(PSTR("\n\nInit Gyro\n"));
 
     // flash leds to tell user to keep the IMU still
     AP_Notify::flags.initialising = true;
@@ -764,6 +767,9 @@ AP_InertialSensor::_init_gyro()
             last_average[k] = gyro_avg[k];
         }
     }
+    
+    // Jump line after loading has finished
+    hal.console->print_P(PSTR("\n"));
 
     // stop flashing leds
     AP_Notify::flags.initialising = false;
