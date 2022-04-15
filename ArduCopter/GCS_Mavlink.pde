@@ -877,7 +877,6 @@ void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
         pmTest1++;
         break;
     }
-
     case MAVLINK_MSG_ID_SET_MODE:       // MAV ID: 11
     {
         // decode
@@ -910,12 +909,12 @@ void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
     case MAVLINK_MSG_ID_PARAM_REQUEST_LIST:         // MAV ID: 21
     {
         // mark the firmware version in the tlog
-        send_text_P(SEVERITY_LOW, PSTR(FIRMWARE_STRING));
+        send_text_P(SEVERITY_INFO, PSTR(FIRMWARE_STRING));
 
 #if defined(PX4_GIT_VERSION) && defined(NUTTX_GIT_VERSION)
-        send_text_P(SEVERITY_LOW, PSTR("PX4: " PX4_GIT_VERSION " NuttX: " NUTTX_GIT_VERSION));
+        send_text_P(SEVERITY_INFO, PSTR("PX4: " PX4_GIT_VERSION " NuttX: " NUTTX_GIT_VERSION));
 #endif
-        send_text_P(SEVERITY_LOW, PSTR("Frame: " FRAME_CONFIG_STRING));
+        send_text_P(SEVERITY_INFO, PSTR("Frame " FRAME_CONFIG_STRING));
         handle_param_request_list(msg);
         break;
     }
@@ -1236,7 +1235,29 @@ void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
             // param4 : timeout (in seconds)
             result = mavlink_motor_test_start(chan, (uint8_t)packet.param1, (uint8_t)packet.param2, (uint16_t)packet.param3, packet.param4);
             break;
+        case MAV_CMD_DO_SET_MODE :
+        {
+            // decode
+            mavlink_set_mode_t packet;
+            mavlink_msg_set_mode_decode(msg, &packet);
+            send_text_P(SEVERITY_INFO, PSTR("MAV_CMD_DO_SET_MODE"));
 
+            // exit immediately if this command is not meant for this vehicle
+            if (mavlink_check_target(packet.target_system, 0)) {
+                break;
+            }
+
+            // only accept custom modes because there is no easy mapping from Mavlink flight modes to AC flight modes
+            if (packet.base_mode & MAV_MODE_FLAG_CUSTOM_MODE_ENABLED) {
+                if (set_mode(packet.custom_mode)) {
+                    result = MAV_RESULT_ACCEPTED;
+                }
+            }
+
+            // send ACK or NAK
+            mavlink_msg_command_ack_send_buf(msg, chan, MAVLINK_MSG_ID_SET_MODE, result);
+            break;
+        }
         default:
             result = MAV_RESULT_UNSUPPORTED;
             break;
@@ -1465,7 +1486,7 @@ static void mavlink_delay_cb()
     }
     if (tnow - last_5s > 5000) {
         last_5s = tnow;
-        gcs_send_text_P(SEVERITY_LOW, PSTR("Initialising APM..."));
+        gcs_send_text_P(SEVERITY_INFO, PSTR("Initialising APM..."));
     }
     check_usb_mux();
 

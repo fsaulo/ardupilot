@@ -271,7 +271,7 @@ static void startup_ground(void)
         hal.uartD->set_blocking_writes(false);
     }
 
-    gcs_send_text_P(SEVERITY_LOW,PSTR("\n\n Ready to FLY."));
+    gcs_send_text_P(SEVERITY_INFO,PSTR("\n\n Ready to FLY.\n"));
 }
 
 static enum FlightMode get_previous_mode() {
