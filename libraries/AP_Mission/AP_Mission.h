@@ -27,7 +27,12 @@
 #define AP_MISSION_EEPROM_VERSION           0x65AE  // version number stored in first four bytes of eeprom.  increment this by one when eeprom format is changed
 #define AP_MISSION_EEPROM_COMMAND_SIZE      15      // size in bytes of all mission commands
 
-#define AP_MISSION_MAX_NUM_DO_JUMP_COMMANDS 3       // only allow up to 3 do-jump commands (due to RAM limitations on the APM2)
+#if HAL_CPU_CLASS < HAL_CPU_CLASS_75
+ # define AP_MISSION_MAX_NUM_DO_JUMP_COMMANDS 3     // allow up to 3 do-jump commands (due to RAM limitations) on the APM2
+#else
+ # define AP_MISSION_MAX_NUM_DO_JUMP_COMMANDS 15    // allow up to 15 do-jump commands all high speed CPUs
+#endif
+
 #define AP_MISSION_JUMP_REPEAT_FOREVER      -1      // when do-jump command's repeat count is -1 this means endless repeat
 
 #define AP_MISSION_CMD_ID_NONE              0       // mavlink cmd id of zero means invalid or missing command
@@ -43,21 +48,6 @@
 class AP_Mission {
 
 public:
-
-    // nav guided command
-    struct PACKED Nav_Guided_Command {
-        float alt_min;          // min alt below which the command will be aborted.  0 for no lower alt limit
-        float alt_max;          // max alt above which the command will be aborted.  0 for no upper alt limit
-        float horiz_max;        // max horizontal distance the vehicle can move before the command will be aborted.  0 for no horizontal limit
-    };
-
-    // nav velocity command
-    struct PACKED Nav_Velocity_Command {
-        float x;                // lat (i.e. north) velocity in m/s
-        float y;                // lon (i.e. east) velocity in m/s
-        float z;                // vertical velocity in m/s
-    };
-
     // jump command structure
     struct PACKED Jump_Command {
         uint16_t target;        // target command id
@@ -116,18 +106,40 @@ public:
         float cycle_time;       // cycle time in seconds (the time between peaks or the time the servo is at the specified pwm value for each cycle?)
     };
 
+    // mount control command structure
+    struct PACKED Mount_Control {
+        float pitch;            // pitch angle in degrees
+        float roll;             // roll angle in degrees
+        float yaw;              // yaw angle (relative to vehicle heading) in degrees
+    };
+
     // set cam trigger distance command structure
     struct PACKED Cam_Trigg_Distance {
         float meters;           // distance
     };
 
+    // gripper command structure
+    struct PACKED Gripper_Command {
+        uint8_t num;            // gripper number
+        uint8_t action;         // action (0 = release, 1 = grab)
+    };
+
+    // high altitude balloon altitude wait
+    struct PACKED Altitude_Wait {
+        float altitude; // meters
+        float descent_rate; // m/s
+        uint8_t wiggle_time; // seconds
+    };
+
+    // nav guided command
+    struct PACKED Guided_Limits_Command {
+        // max time is held in p1 field
+        float alt_min;          // min alt below which the command will be aborted.  0 for no lower alt limit
+        float alt_max;          // max alt above which the command will be aborted.  0 for no upper alt limit
+        float horiz_max;        // max horizontal distance the vehicle can move before the command will be aborted.  0 for no horizontal limit
+    };
+
     union PACKED Content {
-        // Nav_Guided_Command
-        Nav_Guided_Command nav_guided;
-
-        // Nav_Velocity_Command
-        Nav_Velocity_Command nav_velocity;
-
         // jump structure
         Jump_Command jump;
 
@@ -155,8 +167,18 @@ public:
         // do-repeate-servo
         Repeat_Servo_Command repeat_servo;
 
+        // mount control
+        Mount_Control mount_control;
+
+        // do-gripper
+        Gripper_Command gripper;
+
+        // do-guided-limits
+        Guided_Limits_Command guided_limits;
+
         // cam trigg distance
-        Cam_Trigg_Distance cam_trigg_dist;
+        // Cam_Trigg_Distance cam_trigg_dist;
+        Altitude_Wait altitude_wait;
 
         // location
         Location location;      // Waypoint location
@@ -273,7 +295,7 @@ public:
     /// get_current_nav_index - returns the current "navigation" command index
     /// Note that this will return 0 if there is no command. This is
     /// used in MAVLink reporting of the mission command
-    uint16_t get_current_nav_index() const { 
+    uint16_t get_current_nav_index() const {
         return _nav_cmd.index==AP_MISSION_CMD_INDEX_NONE?0:_nav_cmd.index; }
 
     /// get_prev_nav_cmd_index - returns the previous "navigation" commands index (i.e. position in the mission command list)
@@ -320,6 +342,11 @@ public:
 
     // return the last time the mission changed in milliseconds
     uint32_t last_change_time_ms(void) const { return _last_change_time_ms; }
+
+    // find the nearest landing sequence starting point (DO_LAND_START) and
+    // return its index.  Returns 0 if no appropriate DO_LAND_START point can
+    // be found.
+    uint16_t get_landing_sequence_start();
 
     // user settable parameters
     static const struct AP_Param::GroupInfo var_info[];
