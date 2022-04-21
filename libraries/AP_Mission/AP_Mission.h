@@ -336,6 +336,8 @@ public:
     //  return true on success, false on failure
     static bool mavlink_to_mission_cmd(const mavlink_mission_item_t& packet, AP_Mission::Mission_Command& cmd);
 
+    static uint8_t mission_item_int_to_mission_item(mavlink_mission_item_int_t &item_int, mavlink_mission_item_t &item);
+
     // mission_cmd_to_mavlink - converts an AP_Mission::Mission_Command object to a mavlink message which can be sent to the GCS
     //  return true on success, false on failure
     static bool mission_cmd_to_mavlink(const AP_Mission::Mission_Command& cmd, mavlink_mission_item_t& packet);

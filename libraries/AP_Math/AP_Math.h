@@ -162,6 +162,14 @@ float   constrain_float(float amt, float low, float high);
 int16_t constrain_int16(int16_t amt, int16_t low, int16_t high);
 int32_t constrain_int32(int32_t amt, int32_t low, int32_t high);
 
+// return true when lat and lng are within range
+bool        check_lat(float lat) WARN_IF_UNUSED;
+bool        check_lng(float lng) WARN_IF_UNUSED;
+bool        check_lat(int32_t lat) WARN_IF_UNUSED;
+bool        check_lng(int32_t lng) WARN_IF_UNUSED;
+bool        check_latlng(float lat, float lng) WARN_IF_UNUSED;
+bool        check_latlng(int32_t lat, int32_t lng) WARN_IF_UNUSED;
+
 // degrees -> radians
 float radians(float deg);
 

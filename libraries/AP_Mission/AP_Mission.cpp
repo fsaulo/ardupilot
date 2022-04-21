@@ -594,6 +594,7 @@ bool AP_Mission::mavlink_to_mission_cmd(const mavlink_mission_item_t& packet, AP
         break;
 
     case MAV_CMD_DO_SET_HOME:
+        hal.console->printf_P("MAV_CMD_DO_SET_HOME");
         copy_location = true;
         cmd.p1 = packet.param1;                         // p1=0 means use current location, p=1 means use provided location
         break;
@@ -1365,4 +1366,44 @@ uint16_t AP_Mission::get_landing_sequence_start()
     }
 
     return landing_start_index;
+}
+
+uint8_t AP_Mission::mission_item_int_to_mission_item(mavlink_mission_item_int_t &item_int,
+        mavlink_mission_item_t &item)
+{
+    item.param1 = item_int.param1;
+    item.param2 = item_int.param2;
+    item.param3 = item_int.param3;
+    item.param4 = item_int.param4;
+    item.z = item_int.z;
+    item.seq = item_int.seq;
+    item.command = item_int.command;
+    item.target_system = item_int.target_system;
+    item.target_component = item_int.target_component;
+    item.frame = item_int.frame;
+    item.current = item_int.current;
+    item.autocontinue = item_int.autocontinue;
+
+    switch (item_int.command) {
+        case MAV_CMD_DO_DIGICAM_CONTROL:
+        case MAV_CMD_DO_DIGICAM_CONFIGURE:
+            item.x = item_int.x;
+            item.y = item_int.y;
+            break;
+
+        default:
+            // all other commands use x and y as lat/lon. We need to
+            // multiply by 1e-7 to convert to float
+            item.x = item_int.x * 1.0e-7f;
+            item.y = item_int.y * 1.0e-7f;
+            if (!check_lat(item.x)) {
+                return MAV_MISSION_INVALID_PARAM5_X;
+            }
+            if (!check_lng(item.y)) {
+                return MAV_MISSION_INVALID_PARAM6_Y;
+            }
+            break;
+    }
+
+    return MAV_MISSION_ACCEPTED;
 }

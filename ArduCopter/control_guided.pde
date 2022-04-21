@@ -10,6 +10,16 @@
 
 static bool guided_pilot_yaw_override_yaw = false;
 
+struct Guided_Limit {
+    uint32_t timeout_ms;  // timeout (in seconds) from the time that guided is invoked
+    float alt_min_cm;   // lower altitude limit in cm above home (0 = no limit)
+    float alt_max_cm;   // upper altitude limit in cm above home (0 = no limit)
+    float horiz_max_cm; // horizontal position limit in cm from where guided mode was initiated (0 = no limit)
+    uint32_t start_time;// system time in milliseconds that control was handed to the external computer
+    Vector3f start_pos; // start position as a distance from home in cm.  used for checking horiz_max limit
+} guided_limit;
+
+
 // guided_init - initialise guided controller
 static bool guided_init(bool ignore_checks)
 {

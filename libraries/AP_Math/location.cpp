@@ -33,6 +33,32 @@
 // inverse of LOCATION_SCALING_FACTOR
 #define LOCATION_SCALING_FACTOR_INV 89.83204953368922f
 
+// return true when lat and lng are within range
+bool check_lat(float lat)
+{
+    return fabsf(lat) <= 90;
+}
+bool check_lng(float lng)
+{
+    return fabsf(lng) <= 180;
+}
+bool check_lat(int32_t lat)
+{
+    return labs(lat) <= 90*1e7;
+}
+bool check_lng(int32_t lng)
+{
+    return labs(lng) <= 180*1e7;
+}
+bool check_latlng(float lat, float lng)
+{
+    return check_lat(lat) && check_lng(lng);
+}
+bool check_latlng(int32_t lat, int32_t lng)
+{
+    return check_lat(lat) && check_lng(lng);
+}
+
 float longitude_scale(const struct Location &loc)
 {
     static int32_t last_lat;

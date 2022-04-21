@@ -696,7 +696,6 @@ void GCS_MAVLINK::handle_radio_status(mavlink_message_t *msg, DataFlash_Class &d
     }
 }
 
-
 /*
   handle an incoming mission item
  */
@@ -706,7 +705,21 @@ void GCS_MAVLINK::handle_mission_item(mavlink_message_t *msg, AP_Mission &missio
     uint8_t result = MAV_MISSION_ACCEPTED;
     struct AP_Mission::Mission_Command cmd = {};
 
-    mavlink_msg_mission_item_decode(msg, &packet);
+    hal.console->printf_P("handle_mission_item\n");
+
+    // We do not support mavlink_msg_mission_item_int instead we
+    // expect these packets are mavlink_msg_mission_item
+    if (msg->msgid == MAVLINK_MSG_ID_MISSION_ITEM_INT) {
+        hal.console->printf_P("MAVLINK_MSG_ID_MISSION_ITEM\n");
+        mavlink_mission_item_int_t mission_item_int;
+        mavlink_msg_mission_item_int_decode(msg, &mission_item_int);
+        result = AP_Mission::mission_item_int_to_mission_item(mission_item_int, packet);
+        if (result != MAV_MISSION_ACCEPTED) {
+            goto mission_ack;
+        }
+    } else {
+        mavlink_msg_mission_item_decode(msg, &packet);
+    }
     
     if (mavlink_check_target(packet.target_system,packet.target_component)) {
         return;

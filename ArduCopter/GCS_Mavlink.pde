@@ -932,14 +932,21 @@ void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
     }
 
     // GCS has sent us a command from GCS, store to EEPROM
-    case MAVLINK_MSG_ID_MISSION_ITEM:           // MAV ID: 39
+    case MAVLINK_MSG_ID_MISSION_ITEM:           // MAV ID: 39 (DEPRECATED)
+    {
+        handle_mission_item(msg, mission);
+        break;
+    }
+
+    // same as MSG_ID_MISSION_ITEM, converts to mission_item before storing mission
+    case MAVLINK_MSG_ID_MISSION_ITEM_INT:      // MAV ID: 51
     {
         handle_mission_item(msg, mission);
         break;
     }
 
     // read an individual command from EEPROM and send it to the GCS
-    case MAVLINK_MSG_ID_MISSION_REQUEST:     // MAV ID: 40
+    case MAVLINK_MSG_ID_MISSION_REQUEST:       // MAV ID: 40
     {
         handle_mission_request(mission, msg);
         break;
@@ -1058,6 +1065,14 @@ void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
                 result = MAV_RESULT_ACCEPTED;
             }
             break;
+
+        case MAV_CMD_DO_LAND_START:
+        {
+            if (set_mode(LAND)) {
+                result = MAV_RESULT_ACCEPTED;
+            }
+            break;
+        }
 
         case MAV_CMD_CONDITION_YAW:
             // param1 : target angle [0-360]
@@ -1237,25 +1252,28 @@ void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
             break;
         case MAV_CMD_DO_SET_MODE :
         {
-            // decode
-            mavlink_set_mode_t packet;
-            mavlink_msg_set_mode_decode(msg, &packet);
-            send_text_P(SEVERITY_INFO, PSTR("MAV_CMD_DO_SET_MODE"));
+            // param1 : base mode
+            // param2 : custom mode
+            // param3 : custom submode
+
+            mavlink_command_long_t packet;
+            mavlink_msg_command_long_decode(msg, &packet);
 
             // exit immediately if this command is not meant for this vehicle
             if (mavlink_check_target(packet.target_system, 0)) {
                 break;
             }
 
-            // only accept custom modes because there is no easy mapping from Mavlink flight modes to AC flight modes
-            if (packet.base_mode & MAV_MODE_FLAG_CUSTOM_MODE_ENABLED) {
-                if (set_mode(packet.custom_mode)) {
+            uint8_t base_mode = packet.param1;
+            
+            // only accept custom modes
+            if (base_mode & MAV_MODE_FLAG_CUSTOM_MODE_ENABLED) {
+                uint16_t custom_mode = packet.param2;
+
+                if (set_mode(custom_mode)) {
                     result = MAV_RESULT_ACCEPTED;
                 }
             }
-
-            // send ACK or NAK
-            mavlink_msg_command_ack_send_buf(msg, chan, MAVLINK_MSG_ID_SET_MODE, result);
             break;
         }
         default:
@@ -1268,7 +1286,6 @@ void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
 
         break;
     }
-
     case MAVLINK_MSG_ID_COMMAND_ACK:        // MAV ID: 77
     {
         command_ack_counter++;
