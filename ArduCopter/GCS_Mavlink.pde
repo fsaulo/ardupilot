@@ -1560,14 +1560,14 @@ static void gcs_send_text_P(gcs_severity severity, const prog_char_t *str)
 }
 
 /*
- *  send a low priority formatted message to the GCS
+ *  send a low priority formatted info message to the GCS
  *  only one fits in the queue, so if you send more than one before the
  *  last one gets into the serial buffer then the old one will be lost
  */
 void gcs_send_text_fmt(const prog_char_t *fmt, ...)
 {
     va_list arg_list;
-    gcs[0].pending_status.severity = (uint8_t)SEVERITY_LOW;
+    gcs[0].pending_status.severity = (uint8_t)SEVERITY_INFO;
     va_start(arg_list, fmt);
     hal.util->vsnprintf_P((char *)gcs[0].pending_status.text,
             sizeof(gcs[0].pending_status.text), fmt, arg_list);

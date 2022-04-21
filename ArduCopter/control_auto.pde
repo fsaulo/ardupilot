@@ -133,6 +133,7 @@ static void auto_takeoff_run()
 // auto_wp_start - initialises waypoint controller to implement flying to a particular destination
 static void auto_wp_start(const Vector3f& destination)
 {
+    cliSerial->printf_P("wp start\n");
     auto_mode = Auto_WP;
 
     // initialise wpnav
