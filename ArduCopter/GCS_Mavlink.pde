@@ -1256,9 +1256,6 @@ void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
             // param2 : custom mode
             // param3 : custom submode
 
-            mavlink_command_long_t packet;
-            mavlink_msg_command_long_decode(msg, &packet);
-
             // exit immediately if this command is not meant for this vehicle
             if (mavlink_check_target(packet.target_system, 0)) {
                 break;
