@@ -993,7 +993,7 @@ void DataFlash_Class::Log_Write_EKF(AP_AHRS_NavEKF &ahrs)
 #endif
 
 // Write a command processing packet
-void DataFlash_Class::Log_Write_MavCmd(uint16_t cmd_total, const mavlink_mission_item_t& mav_cmd)
+void DataFlash_Class::Log_Write_MavCmd(uint16_t cmd_total, const mavlink_mission_item_int_t& mav_cmd)
 {
     struct log_Cmd pkt = {
         LOG_PACKET_HEADER_INIT(LOG_CMD_MSG),

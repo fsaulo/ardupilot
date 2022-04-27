@@ -594,7 +594,6 @@ bool AP_Mission::mavlink_to_mission_cmd(const mavlink_mission_item_t& packet, AP
         break;
 
     case MAV_CMD_DO_SET_HOME:
-        hal.console->printf_P("MAV_CMD_DO_SET_HOME");
         copy_location = true;
         cmd.p1 = packet.param1;                         // p1=0 means use current location, p=1 means use provided location
         break;
@@ -771,7 +770,7 @@ bool AP_Mission::mavlink_to_mission_cmd(const mavlink_mission_item_t& packet, AP
 
 // mission_cmd_to_mavlink - converts an AP_Mission::Mission_Command object to a mavlink message which can be sent to the GCS
 //  return true on success, false on failure
-bool AP_Mission::mission_cmd_to_mavlink(const AP_Mission::Mission_Command& cmd, mavlink_mission_item_t& packet)
+bool AP_Mission::mission_cmd_to_mavlink(const AP_Mission::Mission_Command& cmd, mavlink_mission_item_int_t& packet)
 {
     bool copy_location = false;
     bool copy_alt = false;
@@ -978,8 +977,9 @@ bool AP_Mission::mission_cmd_to_mavlink(const AP_Mission::Mission_Command& cmd, 
 
     // copy location from mavlink to command
     if (copy_location) {
-        packet.x = cmd.content.location.lat / 1.0e7f;   // int32_t latitude to float
-        packet.y = cmd.content.location.lng / 1.0e7f;   // int32_t longitude to float
+        // no longer needed to divide by 1e7 when using mavlink_mission_item_int_t
+        packet.x = cmd.content.location.lat;
+        packet.y = cmd.content.location.lng;
     }
     if (copy_location || copy_alt) {
         packet.z = cmd.content.location.alt / 100.0f;   // cmd alt in cm to m
@@ -1366,6 +1366,47 @@ uint16_t AP_Mission::get_landing_sequence_start()
     }
 
     return landing_start_index;
+}
+
+
+uint8_t AP_Mission::command_int_to_mission_item(mavlink_command_int_t &cmd_int, 
+        mavlink_mission_item_t &item)
+{
+    item.param1 = cmd_int.param1;
+    item.param2 = cmd_int.param2;
+    item.param3 = cmd_int.param3;
+    item.param4 = cmd_int.param4;
+    item.z = cmd_int.z;
+    item.target_system = cmd_int.target_system;
+    item.target_component = cmd_int.target_component;
+    item.frame = cmd_int.frame;
+    item.command = cmd_int.command;
+
+    switch (item.command) {
+        case MAV_CMD_DO_DIGICAM_CONFIGURE:
+            item.x = cmd_int.x;
+            item.y = cmd_int.y;
+            break;
+        default:
+            item.x = cmd_int.x * 1.0e-7f;
+            item.y = cmd_int.y * 1.0e-7f;
+            if (!check_lat(item.x)) {
+                return MAV_MISSION_INVALID_PARAM5_X;
+            }
+            if (!check_lng(item.y)) {
+                return MAV_MISSION_INVALID_PARAM6_Y;
+            }
+            break;
+    }
+    return MAV_MISSION_ACCEPTED;
+}
+
+void AP_Mission::mission_request_int_to_mission_request(mavlink_mission_request_int_t &request_int,
+        mavlink_mission_request_t &request)
+{
+    request.seq = request_int.seq;
+    request.target_system = request_int.target_system;
+    request.target_component = request_int.target_component;
 }
 
 uint8_t AP_Mission::mission_item_int_to_mission_item(mavlink_mission_item_int_t &item_int,

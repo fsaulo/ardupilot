@@ -245,10 +245,20 @@ void GCS_MAVLINK::handle_mission_request_list(AP_Mission &mission, mavlink_messa
  */
 void GCS_MAVLINK::handle_mission_request(AP_Mission &mission, mavlink_message_t *msg)
 {
-    AP_Mission::Mission_Command cmd;
     // decode
     mavlink_mission_request_t packet;
-    mavlink_msg_mission_request_decode(msg, &packet);
+    AP_Mission::Mission_Command cmd;
+
+    // checks if packet is a mission_request_int_t then converts to
+    // old mission_request_t. Needed to keep compatibility
+    if (msg->msgid == MAVLINK_MSG_ID_MISSION_REQUEST_INT) {
+        mavlink_mission_request_int_t request_int;
+        mavlink_msg_mission_request_int_decode(msg, &request_int);
+        AP_Mission::mission_request_int_to_mission_request(request_int, packet);
+    } else {
+        mavlink_msg_mission_request_decode(msg, &packet);
+    }
+
 
     // exit immediately if this command is not meant for this vehicle
     if (mavlink_check_target(packet.target_system, packet.target_component)) {
@@ -261,7 +271,7 @@ void GCS_MAVLINK::handle_mission_request(AP_Mission &mission, mavlink_message_t 
     }
 
     // convert mission command to mavlink mission item packet
-    mavlink_mission_item_t ret_packet;
+    mavlink_mission_item_int_t ret_packet;
     memset(&ret_packet, 0, sizeof(ret_packet));
     if (!AP_Mission::mission_cmd_to_mavlink(cmd, ret_packet)) {
         goto mission_item_send_failed;
@@ -288,11 +298,11 @@ void GCS_MAVLINK::handle_mission_request(AP_Mission &mission, mavlink_message_t 
     ret_packet.command = cmd.id;
 
     _mav_finalize_message_chan_send(chan, 
-                                    MAVLINK_MSG_ID_MISSION_ITEM,
+                                    MAVLINK_MSG_ID_MISSION_ITEM_INT,
                                     (const char *)&ret_packet,
-                                    MAVLINK_MSG_ID_SERIAL_CONTROL_MIN_LEN,
-                                    MAVLINK_MSG_ID_MISSION_ITEM_LEN,
-                                    MAVLINK_MSG_ID_MISSION_ITEM_CRC);
+                                    MAVLINK_MSG_ID_MISSION_ITEM_INT_MIN_LEN,
+                                    MAVLINK_MSG_ID_MISSION_ITEM_INT_LEN,
+                                    MAVLINK_MSG_ID_MISSION_ITEM_INT_CRC);
     return;
 
 mission_item_send_failed:
@@ -705,12 +715,9 @@ void GCS_MAVLINK::handle_mission_item(mavlink_message_t *msg, AP_Mission &missio
     uint8_t result = MAV_MISSION_ACCEPTED;
     struct AP_Mission::Mission_Command cmd = {};
 
-    hal.console->printf_P("handle_mission_item\n");
-
     // We do not support mavlink_msg_mission_item_int instead we
     // expect these packets are mavlink_msg_mission_item
     if (msg->msgid == MAVLINK_MSG_ID_MISSION_ITEM_INT) {
-        hal.console->printf_P("MAVLINK_MSG_ID_MISSION_ITEM\n");
         mavlink_mission_item_int_t mission_item_int;
         mavlink_msg_mission_item_int_decode(msg, &mission_item_int);
         result = AP_Mission::mission_item_int_to_mission_item(mission_item_int, packet);

@@ -952,6 +952,12 @@ void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
         break;
     }
 
+    case MAVLINK_MSG_ID_MISSION_REQUEST_INT:
+    {
+        handle_mission_request(mission, msg);
+        break;
+    }
+
     case MAVLINK_MSG_ID_MISSION_SET_CURRENT:    // MAV ID: 41
     {
         handle_mission_set_current(mission, msg);

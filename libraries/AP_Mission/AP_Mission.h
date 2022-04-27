@@ -336,11 +336,18 @@ public:
     //  return true on success, false on failure
     static bool mavlink_to_mission_cmd(const mavlink_mission_item_t& packet, AP_Mission::Mission_Command& cmd);
 
+    // mission item comes from modern GCS as mission_item_int, so we need to convert back to mission_item_t
     static uint8_t mission_item_int_to_mission_item(mavlink_mission_item_int_t &item_int, mavlink_mission_item_t &item);
+
+    // converts mission_request_int_t to mission_request_t, this step is necessary to keep compatibility while accepting new mavlink mission requests
+    static void mission_request_int_to_mission_request(mavlink_mission_request_int_t &request_int, mavlink_mission_request_t &request);
+
+    // converts mavlink_command_int to a mavlink_mission_item, checks if lat/long inputs are valid
+    static uint8_t command_int_to_mission_item(mavlink_command_int_t &cmd_int, mavlink_mission_item_t &item);
 
     // mission_cmd_to_mavlink - converts an AP_Mission::Mission_Command object to a mavlink message which can be sent to the GCS
     //  return true on success, false on failure
-    static bool mission_cmd_to_mavlink(const AP_Mission::Mission_Command& cmd, mavlink_mission_item_t& packet);
+    static bool mission_cmd_to_mavlink(const AP_Mission::Mission_Command& cmd, mavlink_mission_item_int_t& packet);
 
     // return the last time the mission changed in milliseconds
     uint32_t last_change_time_ms(void) const { return _last_change_time_ms; }

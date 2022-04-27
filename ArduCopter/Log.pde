@@ -450,7 +450,7 @@ static void Log_Write_Performance()
 // Write a mission command. Total length : 36 bytes
 static void Log_Write_Cmd(const AP_Mission::Mission_Command &cmd)
 {
-    mavlink_mission_item_t mav_cmd = {};
+    mavlink_mission_item_int_t mav_cmd = {};
     AP_Mission::mission_cmd_to_mavlink(cmd,mav_cmd);
     DataFlash.Log_Write_MavCmd(mission.num_commands(),mav_cmd);
 }
