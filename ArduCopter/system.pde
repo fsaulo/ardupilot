@@ -108,7 +108,7 @@ static void init_ardupilot()
         hal.uartE->begin(38400, 256, 16);
     }
 #endif
-    gcs_send_text_P(SEVERITY_INFO, ("Init " FIRMWARE_STRING "\n"));
+    gcs_send_text_P(SEVERITY_INFO, PSTR("Init " FIRMWARE_STRING "\n"));
     cliSerial->printf_P(PSTR("Free RAM: %u\n"), hal.util->available_memory());
 
 #if CONFIG_HAL_BOARD == HAL_BOARD_APM2

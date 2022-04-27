@@ -23,7 +23,6 @@
 #include <AP_HAL.h>
 #include <GCS_MAVLink.h>
 #include <SITL.h>
-#include <stdio.h>
 
 extern const AP_HAL::HAL& hal;
 
