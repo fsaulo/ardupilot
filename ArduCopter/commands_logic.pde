@@ -29,6 +29,7 @@ static bool verify_nav_guided(const AP_Mission::Mission_Command& cmd);
 #endif
 static void auto_spline_start(const Vector3f& destination, bool stopped_at_start, AC_WPNav::spline_segment_end_type seg_end_type, const Vector3f& next_spline_destination);
 
+
 // start_command - this function will be called when the ap_mission lib wishes to start a new command
 static bool start_command(const AP_Mission::Mission_Command& cmd)
 {
@@ -115,16 +116,16 @@ static bool start_command(const AP_Mission::Mission_Command& cmd)
     case MAV_CMD_DO_SET_SERVO:
         ServoRelayEvents.do_set_servo(cmd.content.servo.channel, cmd.content.servo.pwm);
         break;
-        
+
     case MAV_CMD_DO_SET_RELAY:
         ServoRelayEvents.do_set_relay(cmd.content.relay.num, cmd.content.relay.state);
         break;
-        
+
     case MAV_CMD_DO_REPEAT_SERVO:
         ServoRelayEvents.do_repeat_servo(cmd.content.repeat_servo.channel, cmd.content.repeat_servo.pwm,
                                          cmd.content.repeat_servo.repeat_count, cmd.content.repeat_servo.cycle_time * 1000.0f);
         break;
-        
+
     case MAV_CMD_DO_REPEAT_RELAY:
         ServoRelayEvents.do_repeat_relay(cmd.content.repeat_relay.num, cmd.content.repeat_relay.repeat_count,
                                          cmd.content.repeat_relay.cycle_time * 1000.0f);
@@ -701,19 +702,19 @@ static bool verify_nav_guided(const AP_Mission::Mission_Command& cmd)
     const Vector3f& curr_pos = inertial_nav.get_position();
 
     // check if we have gone below min alt
-    if (cmd.content.nav_guided.alt_min != 0 && (curr_pos.z / 100) < cmd.content.nav_guided.alt_min) {
+    if (cmd.content.guided_limits.alt_min != 0 && (curr_pos.z / 100) < cmd.content.guided_limits.alt_min) {
         return true;
     }
 
     // check if we have gone above max alt
-    if (cmd.content.nav_guided.alt_max != 0 && (curr_pos.z / 100) > cmd.content.nav_guided.alt_max) {
+    if (cmd.content.guided_limits.alt_max != 0 && (curr_pos.z / 100) > cmd.content.guided_limits.alt_max) {
         return true;
     }
 
     // check if we have gone beyond horizontal limit
-    if (cmd.content.nav_guided.horiz_max != 0) {
+    if (cmd.content.guided_limits.horiz_max != 0) {
         float horiz_move = pv_get_horizontal_distance_cm(nav_guided.start_position, curr_pos) / 100;
-        if (horiz_move > cmd.content.nav_guided.horiz_max) {
+        if (horiz_move > cmd.content.guided_limits.horiz_max) {
             return true;
         }
     }
