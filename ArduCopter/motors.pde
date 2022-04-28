@@ -658,11 +658,15 @@ static void init_disarm_motors()
         return;
     }
 
+    // only disarm if the vehicle is on the ground
+    if (ap.land_complete) {
 #if HIL_MODE != HIL_MODE_DISABLED || CONFIG_HAL_BOARD == HAL_BOARD_AVR_SITL
-    gcs_send_text_P(SEVERITY_HIGH, PSTR("DISARMING MOTORS"));
+        gcs_send_text_P(SEVERITY_HIGH, PSTR("DISARMING MOTORS"));
 #endif
-
-    motors.armed(false);
+        motors.armed(false);
+    } else {
+        return;
+    }
 
     // disable inertial nav errors temporarily
     inertial_nav.ignore_next_error();
