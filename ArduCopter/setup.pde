@@ -557,6 +557,9 @@ init_esc()
 static void report_version()
 {
     cliSerial->printf_P(PSTR("Firmware version: 3v%d\n"),(int)g.k_format_version);
+    cliSerial->printf_P(PSTR("WARNING: firmware with unstable features.\n"));
+    cliSerial->printf_P(PSTR("Only meant for researh purposes.\n"));
+    cliSerial->printf_P(PSTR("Maintained by Saulo G. Felix.\n"));
     print_divider();
     print_blanks(2);
 }
