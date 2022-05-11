@@ -23,5 +23,5 @@ mavproxy.py \
     --master=$MASTER_PORT \
     --sitl=$SITL_PORT \
     --console \
-    # --cmd="param load $PARAMS;" \
-    # --quadcopter
+    --mav10 \
+    --quadcopter
