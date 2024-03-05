@@ -29,6 +29,7 @@
 
 #include "CANSocketIface.h"
 
+#include <cstdint>
 #include <unistd.h>
 #include <fcntl.h>
 
